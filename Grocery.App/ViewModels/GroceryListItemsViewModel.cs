@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Grocery.App.Views;
+using Grocery.Core.Data.Repositories;
 using Grocery.Core.Interfaces.Services;
 using Grocery.Core.Models;
 using System.Collections.ObjectModel;
@@ -34,6 +35,17 @@ namespace Grocery.App.ViewModels
 
         private void GetAvailableProducts()
         {
+            ProductRepository productRepository = new ProductRepository();
+            AvailableProducts.Clear();
+            List<Product> products = productRepository.GetAll();
+            var groceryList = MyGroceryListItems.Select(items => items.ProductId);
+            foreach (var product in products)
+            {
+                if (!groceryList.Contains(product.Id) && product.Stock > 0)
+                {
+                    AvailableProducts.Add(product);
+                }
+            }
             //Maak de lijst AvailableProducts leeg
             //Haal de lijst met producten op
             //Controleer of het product al op de boodschappenlijst staat, zo niet zet het in de AvailableProducts lijst
@@ -54,6 +66,16 @@ namespace Grocery.App.ViewModels
         [RelayCommand]
         public void AddProduct(Product product)
         {
+            if(product != null && product.Id > 0)
+            {
+                GroceryListItem item = new(0, GroceryList.Id, product.Id, 1);
+                MyGroceryListItems.Add(item);
+                _groceryListItemsService.Add(MyGroceryListItems.Last());
+                product.Stock = product.Stock - 1;
+                _productService.Update(product);
+                GetAvailableProducts();
+                OnGroceryListChanged(GroceryList);
+            }
             //Controleer of het product bestaat en dat de Id > 0
             //Maak een GroceryListItem met Id 0 en vul de juiste productid en grocerylistid
             //Voeg het GroceryListItem toe aan de dataset middels de _groceryListItemsService
