@@ -41,7 +41,7 @@ namespace Grocery.App.ViewModels
             var groceryList = MyGroceryListItems.Select(items => items.ProductId);
             foreach (var product in products)
             {
-                if (!groceryList.Contains(product.Id) || product.Stock > 0)
+                if (!groceryList.Contains(product.Id) && product.Stock > 0)
                 {
                     AvailableProducts.Add(product);
                 }
@@ -68,8 +68,10 @@ namespace Grocery.App.ViewModels
         {
             if(product != null && product.Id > 0)
             {
-                MyGroceryListItems.Add(MyGroceryListItems[0]);
+                GroceryListItem item = new(0, GroceryList.Id, product.Id, 1);
+                MyGroceryListItems.Add(item);
                 _groceryListItemsService.Add(MyGroceryListItems.Last());
+                product.Stock = product.Stock - 1;
                 _productService.Update(product);
                 GetAvailableProducts();
                 OnGroceryListChanged(GroceryList);
