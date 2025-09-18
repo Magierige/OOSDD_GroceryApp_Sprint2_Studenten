@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Grocery.App.Views;
+using Grocery.Core.Data.Repositories;
 using Grocery.Core.Interfaces.Services;
 using Grocery.Core.Models;
 using System.Collections.ObjectModel;
@@ -34,16 +35,13 @@ namespace Grocery.App.ViewModels
 
         private void GetAvailableProducts()
         {
-            AvailableProducts = [];
-            List<Product> products = _productService.GetAll();
-            var groceryList = _groceryListItemsService.GetAllOnGroceryListId(1); //welke??????!!!?!?!?!?!
+            ProductRepository productRepository = new ProductRepository();
+            AvailableProducts.Clear();
+            List<Product> products = productRepository.GetAll();
+            var groceryList = MyGroceryListItems.Select(items => items.ProductId);
             foreach (var product in products)
             {
-                if (groceryList.Contains(product.Id) || product.Stock > 1) // hoe dan
-                {
-                    //i do not yet know how to reverse this outcome
-                }
-                else
+                if (!groceryList.Contains(product.Id) || product.Stock > 0)
                 {
                     AvailableProducts.Add(product);
                 }
