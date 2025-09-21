@@ -1,5 +1,12 @@
 # GroceryApp sprint2 
 
+## branche strategie
+- main is voor de (werkende) releases
+- dev is waar features worden samen gevoegd en er intergratie testen kunnen worden gedaan voor release
+- feature/* is een branche voor het uitwerken van 1 usecase/userstory
+- hotfix/* is voor kleine bug fixes die gelijk naar main word doorgevoerd
+- release/* is voor het maken en behouden van releases
+
 ## Docentversie  
 In deze versie zijn de wijzigingen doorgevoerd en is de code compleet.  
 
